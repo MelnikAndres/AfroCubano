@@ -37,7 +37,7 @@ function createStepHTML(step, status = null) {
     }
     if (step.audio) {
         const indexInFiltered = filteredSteps.findIndex(s => s.nombre === step.nombre);
-        html += ` <a href="#" class="audio-link" onclick="event.preventDefault();showAudioPlayer('${step.nombre}', '${step.orisha}', ${indexInFiltered})">🔊</a>`;
+        html += ` <a href="#" class="audio-link" onclick="event.preventDefault();showAudioPlayer('${step.nombre}', '${step.orisha}', ${indexInFiltered})">Audio ♪</a>`;
     }
     html += `</div>`;
     // Mostrar etiqueta mini SOLO si es modo aleatorio y fue marcado como "no lo sé"
