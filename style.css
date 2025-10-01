@@ -435,7 +435,6 @@ h1 {
     display: inline-block;
     vertical-align: super;
     transition: background 0.3s ease;
-    margin-left: 0.5rem;
 }
 
 .image-link:hover {
