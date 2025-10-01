@@ -476,6 +476,24 @@ body.dark-mode .audio-content {
     border-radius: 6px;
 }
 
+.modal-buttons {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+#toggle-name {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+#toggle-name .icon {
+    margin: 0;
+}
+
 
 .step-title {
     margin: 0;
@@ -537,4 +555,38 @@ body.dark-mode .search-input {
     box-shadow: var(--shadow);
     cursor: pointer;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Name visibility styles */
+.step-name {
+    position: relative;
+    cursor: pointer;
+}
+
+body.hide-names .step-name {
+    color: transparent;
+}
+
+body.hide-names .step-name::before {
+    content: "????????????";
+    position: absolute;
+    left: 0;
+    color: var(--color-text);
+    border-radius: 4px;
+    padding: 2px 8px;
+    filter: blur(3px);
+    pointer-events: none;
+}
+
+body.dark-mode.hide-names .step-name::before {
+    color: var(--color-dark-text);
+}
+
+body.hide-names .step-name.show-name {
+    color: inherit;
+    transition: color 0.2s ease;
+}
+
+body.hide-names .step-name.show-name::before {
+    display: none;
 }

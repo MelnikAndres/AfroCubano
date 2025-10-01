@@ -28,7 +28,7 @@ function resetProgress() {
 
 function createStepHTML(step, status = null) {
     let html = `<div class="info">`;
-    html += `<span class="capitalize-me"><strong >${step.nombre}</strong></span>`;
+    html += `<span class="capitalize-me step-name"><strong >${step.nombre}</strong></span>`;
 
     html += "<div>"
     if (step.video) {
@@ -311,6 +311,35 @@ document.getElementById('toggle-theme').addEventListener('click', toggleTheme);
 // Apply on load
 applyTheme();
 
+// Global name visibility state
+let areNamesVisible = true;
+
+function toggleNames() {
+    areNamesVisible = !areNamesVisible;
+    document.body.classList.toggle('hide-names', !areNamesVisible);
+    const toggleButton = document.getElementById('toggle-names');
+    // Remove any existing show-name classes when toggling visibility
+    if (areNamesVisible) {
+        document.querySelectorAll('.step-name').forEach(el => {
+            el.classList.remove('show-name');
+        });
+    }
+    toggleButton.innerHTML = areNamesVisible ? 
+        '<i data-lucide="eye-off" class="icon"></i> Ocultar nombres' : 
+        '<i data-lucide="eye" class="icon"></i> Mostrar nombres';
+    lucide.createIcons();
+}
+
+// Handle click events on step names
+document.addEventListener('click', (e) => {
+    if (!areNamesVisible && e.target.closest('.step-name')) {
+        const stepName = e.target.closest('.step-name');
+        // Toggle show-name class on click
+        stepName.classList.toggle('show-name');
+    }
+});
+
+document.getElementById('toggle-names').addEventListener('click', toggleNames);
 
 function toggleSection(id, titleEl) {
     const section = document.getElementById(id);
@@ -355,7 +384,7 @@ function showVideoVariations(stepName, orisha, indexInFilteredSteps = null) {
         <div class="video-backdrop" onclick="this.parentElement.remove()"></div>
         <div class="video-content">
             <select id="video-selector" class="btn btn-secondary"></select>
-            <h2 id="video-step-title" class="step-title">${stepName +' '+ orisha}</h2>
+            <h2 id="video-step-title" class="step-title step-name">${stepName +' '+ orisha}</h2>
             <div class="video-controls">
                 <button id="previous-step" class="arrow-btn btn-secondary"><</button>
                 <video id="video-player" controls autoplay loop></video>
@@ -433,7 +462,7 @@ function showAudioPlayer(stepName, orisha, indexInFilteredSteps = null) {
     modal.innerHTML = `
         <div class="audio-backdrop" onclick="this.parentElement.remove()"></div>
         <div class="audio-content">
-            <h2 id="audio-step-title" class="step-title">${stepName} ${orisha}</h2>
+            <h2 id="audio-step-title" class="step-title step-name">${stepName} ${orisha}</h2>
             <div class="audio-controls">
                 <div class="audio-player-container">
                     <audio id="audio-player" controls>
@@ -442,9 +471,11 @@ function showAudioPlayer(stepName, orisha, indexInFilteredSteps = null) {
                     </audio>
                 </div>
             </div>
-            <button id="previous-audio-step" class="arrow-btn btn-secondary"><</button>
-            <button class="btn btn-secondary close-btn" onclick="this.closest('.audio-modal').remove()">Cerrar</button>
-            <button id="next-audio-step" class="arrow-btn btn-secondary">></button>
+            <div class="modal-buttons">
+                <button id="previous-audio-step" class="arrow-btn btn-secondary"><</button>
+                <button class="btn btn-secondary close-btn" onclick="this.closest('.audio-modal').remove()">Cerrar</button>
+                <button id="next-audio-step" class="arrow-btn btn-secondary">></button>
+            </div>
         </div>
     `;
 
@@ -475,6 +506,20 @@ function showAudioPlayer(stepName, orisha, indexInFilteredSteps = null) {
 
     // Stop audio when modal is closed
     const audioPlayer = modal.querySelector('#audio-player');
+    const stepTitle = modal.querySelector('#audio-step-title');
+    const toggleButton = modal.querySelector('#toggle-name');
+    let isNameVisible = true;
+
+    // Toggle name visibility
+    toggleButton.addEventListener('click', () => {
+        isNameVisible = !isNameVisible;
+        stepTitle.style.visibility = isNameVisible ? 'visible' : 'hidden';
+        toggleButton.innerHTML = isNameVisible ? 
+            '<i data-lucide="eye-off"></i> Ocultar nombre' : 
+            '<i data-lucide="eye"></i> Mostrar nombre';
+        lucide.createIcons(); // Recreate icons after changing innerHTML
+    });
+
     modal.querySelector('.audio-backdrop').addEventListener('click', () => {
         audioPlayer.pause();
     });
