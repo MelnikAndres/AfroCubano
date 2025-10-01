@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pasos de Afrocubano</title>
+    <link rel="icon" href="/afrocubano/cuba.jpeg" type="image/x-icon">
+    <meta name="image" content="/afrocubano/cuba.jpeg">
+    <meta property="og:title" content="Pasos de Afrocubano">
+    <meta property="og:image" content="/afrocubano/cuba.jpeg">
+    <meta property="og:type" content="website">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+</head>
+
+<body>
+    <div id="reaction-container"></div>
+    <h1> <div class="cuba" alt="Jamaica"></div> AfroCubano <div class="cuba" alt="Jamaica"></div>
+    </h1>
+    <div id="main-actions">
+        <button id="get-random" class="btn btn-primary">
+            <i data-lucide="dice-5" class="icon"></i> Practicar
+        </button>
+
+        <button id="reset-progress" class="btn btn-secondary">
+            <i data-lucide="rotate-ccw" class="icon"></i> Reiniciar
+        </button>
+
+        <button id="toggle-theme" class="btn btn-secondary">
+            <i data-lucide="moon-star" class="icon"></i> Modo oscuro
+        </button>
+    </div>
+    <div id="random-step" class="step" style="display: none;"></div>
+    <div id="filters" style="display: flex; gap: 1rem; align-items: flex-start;">
+        <div style="flex-grow: 1;">
+            <label for="filter-orisha">Orisha</label><br>
+            <select style="width: 100%;" id="filter-orisha">
+                <option value="">Elegir</option>
+            </select>
+        </div>
+
+        <div style="flex-grow: 1;">
+            <label for="search-step">Buscar paso</label><br>
+            <input style="width: 100%;" class="search-input" type="text" id="search-step" placeholder="Nombre del paso...">
+        </div>
+    </div>
+
+    <div id="filtros-danger" style="display: none;" class="filtros-danger"><small>Activaste un filtro, puede ser que no
+            veas todos los pasos</small></div>
+    <div id="loader">
+        <div class="spinner"></div>
+        <div>Cargando pasos...</div>
+    </div>
+    <div>
+        <div class="section">
+            <div class="section-title" onclick="toggleSection('unseen-list', this)">
+                <span class="toggle-icon">➕</span> Pasos no vistos (<span id="unseen-count">0</span>)
+            </div>
+            <div id="unseen-list" class="section-content"></div>
+        </div>
+
+        <div class="section">
+            <div class="section-title" onclick="toggleSection('known-list', this)">
+                <span class="toggle-icon">➕</span> Ya los sé (<span id="known-count">0</span>)
+            </div>
+            <div id="known-list" class="section-content"></div>
+        </div>
+
+        <div class="section">
+            <div class="section-title" onclick="toggleSection('dontknow-list', this)">
+                <span class="toggle-icon">➕</span> No los sé (<span id="dontKnown-count">0</span>)
+            </div>
+            <div id="dontknow-list" class="section-content"></div>
+        </div>
+    </div>
+
+
+    <script src="index.js"></script>
+</body>
+
+</html>
