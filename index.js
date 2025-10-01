@@ -33,7 +33,7 @@ function createStepHTML(step, status = null) {
     html += "<div>"
     if (step.video) {
         const indexInFiltered = filteredSteps.findIndex(s => s.nombre === step.nombre);
-        html += ` <a href="#" class="video-link" class="video-button" onclick="event.preventDefault();showVideoVariations('${step.nombre}', '${step.orisha}', ${indexInFiltered})">Video ▶︎</a>`;
+        html += ` <a href="#" class="video-link" class="video-button" onclick="event.preventDefault();showVideoVariations('${step.nombre}', '${step.orisha}','${step.video}', ${indexInFiltered})">Video ▶︎</a>`;
     }
     if (step.audio) {
         const indexInFiltered = filteredSteps.findIndex(s => s.nombre === step.nombre);
@@ -375,7 +375,7 @@ function isFilterActive() {
     return orisha || search;
 }
 
-function showVideoVariations(stepName, orisha, indexInFilteredSteps = null) {
+function showVideoVariations(stepName, orisha, vars, indexInFilteredSteps = null) {
     const base = (stepName + orisha).toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]/g, '');
     const modal = document.createElement('div');
     modal.className = 'video-modal';
@@ -399,33 +399,20 @@ function showVideoVariations(stepName, orisha, indexInFilteredSteps = null) {
     const selector = modal.querySelector('#video-selector');
     const player = modal.querySelector('#video-player');
 
-    const sources = [
-        { label: 'Original', url: `pasos/${base}.mp4` },
-        ...Array.from({ length: 5 }, (_, i) => ({
-            label: `Variante ${i + 1}`,
-            url: `pasos/${base}-var-${i + 1}.mp4`
-        }))
-    ];
+    if (vars){
+        const defaultOption = document.createElement('option');
+        defaultOption.value = `pasos/${base}.mp4`;
+        defaultOption.textContent = 'Base';
+        selector.appendChild(defaultOption);
+        player.src = `pasos/${base}.mp4`;
+    }
 
-    let foundOne = false;
-
-    sources.forEach(source => {
+    for (let i = 1; i < vars; i++) {
         const option = document.createElement('option');
-        option.value = source.url;
-        option.textContent = source.label;
-
-        fetch(source.url, { method: 'HEAD' }).then(res => {
-            if (res.ok) {
-                selector.appendChild(option);
-                if (!foundOne) {
-                    player.src = source.url;
-                    foundOne = true;
-                }
-            }
-        }).catch(err => {
-            console.error(`Error fetching ${source.url}:`, err);
-        });
-    });
+        option.value = `pasos/${base}-var-${i}.mp4`;
+        option.textContent = `Variante ${i}`;
+        selector.appendChild(option);
+    }
 
     selector.addEventListener('change', () => {
         player.src = selector.value;
@@ -439,7 +426,7 @@ function showVideoVariations(stepName, orisha, indexInFilteredSteps = null) {
         nextButton.onclick = () => {
             const nextStep = filteredSteps[indexInFilteredSteps + 1];
             modal.remove();
-            showVideoVariations(nextStep.nombre, nextStep.orisha, indexInFilteredSteps + 1);
+            showVideoVariations(nextStep.nombre, nextStep.orisha, nextStep.video, indexInFilteredSteps + 1);
         };
     }
     const previousButton = modal.querySelector('#previous-step');
@@ -449,7 +436,7 @@ function showVideoVariations(stepName, orisha, indexInFilteredSteps = null) {
         previousButton.onclick = () => {
             const previousStep = filteredSteps[indexInFilteredSteps - 1];
             modal.remove();
-            showVideoVariations(previousStep.nombre, previousStep.orisha, indexInFilteredSteps - 1);
+            showVideoVariations(previousStep.nombre, previousStep.orisha, previousStep.video, indexInFilteredSteps - 1);
         };
     }
 }

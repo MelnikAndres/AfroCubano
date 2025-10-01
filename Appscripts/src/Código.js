@@ -11,9 +11,9 @@ function doGet(e) {
     return {
       nombre: row[0],
       orisha: row[1],
-      audio: row[2] ? row[2].toLowerCase() === 'si' : false,
+      audio: row[2] ?? 0,
       enganche: row[3],
-      video: row[4] ? row[4].toLowerCase() === 'si' : false,
+      video: row[4] ?? 0,
     };
   });
 
