@@ -425,6 +425,149 @@ h1 {
     align-self: center;
 }
 
+.image-link {
+    background: var(--color-primary);
+    color: white;
+    padding: 0.35rem 0.7rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    text-decoration: none;
+    display: inline-block;
+    vertical-align: super;
+    transition: background 0.3s ease;
+    margin-left: 0.5rem;
+}
+
+.image-link:hover {
+    background: var(--color-primary-dark);
+}
+
+.image-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.image-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    cursor: pointer;
+}
+
+.image-content {
+    position: relative;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    z-index: 1001;
+    max-width: 90%;
+    max-height: 90vh;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.image-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.normal-view-controls {
+    margin-top: 15px;
+}
+
+.navigation-controls {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+#image-viewer {
+    max-width: 70vw;
+    max-height: 60vh;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.4);
+}
+
+.fullscreen-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.8);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 9999;
+}
+
+.fullscreen-btn:hover {
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.image-content.fullscreen {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    background: rgba(0, 0, 0, 0.95) !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    max-width: none !important;
+    max-height: none !important;
+}
+
+.image-content.fullscreen .normal-view-controls {
+    display: none !important;
+}
+
+.image-content.fullscreen #image-viewer {
+    max-width: 95vw !important;
+    max-height: 95vh !important;
+    object-fit: contain !important;
+}
+
+.image-content.fullscreen .fullscreen-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.image-content.fullscreen .fullscreen-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+body.dark-mode .fullscreen-btn {
+    background: rgba(0, 0, 0, 0.6);
+}
+
+body.dark-mode .fullscreen-btn:hover {
+    background: rgba(0, 0, 0, 0.8);
+}
+
+body.dark-mode .image-content {
+    background: #1f2937;
+    color: #d1d5db;
+}
+
 .audio-modal {
     position: fixed;
     top: 0;

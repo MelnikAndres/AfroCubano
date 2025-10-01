@@ -31,14 +31,14 @@ function createStepHTML(step, status = null) {
     html += `<span class="capitalize-me step-name"><strong >${step.nombre}</strong></span>`;
 
     html += "<div>"
+    const indexInFiltered = filteredSteps.findIndex(s => s.nombre === step.nombre);
     if (step.video) {
-        const indexInFiltered = filteredSteps.findIndex(s => s.nombre === step.nombre);
         html += ` <a href="#" class="video-link" class="video-button" onclick="event.preventDefault();showVideoVariations('${step.nombre}', '${step.orisha}','${step.video}', ${indexInFiltered})">Video ▶︎</a>`;
     }
     if (step.audio) {
-        const indexInFiltered = filteredSteps.findIndex(s => s.nombre === step.nombre);
         html += ` <a href="#" class="audio-link" onclick="event.preventDefault();showAudioPlayer('${step.nombre}', '${step.orisha}', ${indexInFiltered})">Audio ♪</a>`;
     }
+    html += ` <a href="#" class="image-link" onclick="event.preventDefault();showImageViewer('${step.nombre}', '${step.orisha}', ${indexInFiltered})">Imagen 🖼️</a>`;
     html += `</div>`;
     // Mostrar etiqueta mini SOLO si es modo aleatorio y fue marcado como "no lo sé"
     if (status === 'dontknow') {
@@ -373,6 +373,85 @@ function isFilterActive() {
     const search = document.getElementById('search-step').value.trim().toLowerCase();
 
     return orisha || search;
+}
+
+function showImageViewer(stepName, orisha, indexInFilteredSteps = null) {
+    const base = (stepName+orisha).toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]/g, '');
+    const modal = document.createElement('div');
+    modal.className = 'image-modal';
+
+    modal.innerHTML = `
+        <div class="image-backdrop" onclick="this.parentElement.remove()"></div>
+        <div class="image-content">
+            <div class="image-wrapper">
+                <img id="image-viewer" src="explicaciones/${base}.jpg" alt="${stepName}">
+                <button id="fullscreen-btn" class="btn btn-secondary fullscreen-btn" title="Pantalla completa">
+                    <i data-lucide="maximize-2"></i>
+                </button>
+            </div>
+            <div class="normal-view-controls">
+                <h2 id="image-step-title" class="step-title step-name">${stepName} ${orisha}</h2>
+                <div class="navigation-controls">
+                    <button id="previous-image-step" class="arrow-btn btn-secondary"><</button>
+                    <button class="btn btn-secondary close-btn" onclick="this.closest('.image-modal').remove()">Cerrar</button>
+                    <button id="next-image-step" class="arrow-btn btn-secondary">></button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    // Set up navigation buttons
+    const nextButton = modal.querySelector('#next-image-step');
+    if (indexInFilteredSteps === null || !filteredSteps.length || indexInFilteredSteps >= filteredSteps.length - 1) {
+        nextButton.classList.add('disabled');
+    } else {
+        nextButton.onclick = () => {
+            const nextStep = filteredSteps[indexInFilteredSteps + 1];
+            modal.remove();
+            showImageViewer(nextStep.nombre, nextStep.orisha, indexInFilteredSteps + 1);
+        };
+    }
+
+    const previousButton = modal.querySelector('#previous-image-step');
+    if (indexInFilteredSteps === null || indexInFilteredSteps <= 0) {
+        previousButton.classList.add('disabled');
+    } else {
+        previousButton.onclick = () => {
+            const previousStep = filteredSteps[indexInFilteredSteps - 1];
+            modal.remove();
+            showImageViewer(previousStep.nombre, previousStep.orisha, indexInFilteredSteps - 1);
+        };
+    }
+
+    // Set up custom fullscreen functionality
+    const imageContent = modal.querySelector('.image-content');
+    const fullscreenBtn = modal.querySelector('#fullscreen-btn');
+    const imageViewer = modal.querySelector('#image-viewer');
+    let isFullscreen = false;
+
+    fullscreenBtn.onclick = () => {
+        isFullscreen = !isFullscreen;
+        imageContent.classList.toggle('fullscreen', isFullscreen);
+        fullscreenBtn.innerHTML = isFullscreen ? 
+            '<i data-lucide="minimize-2"></i>' : 
+            '<i data-lucide="maximize-2"></i>';
+        lucide.createIcons();
+    };
+
+    // Handle Esc key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && isFullscreen) {
+            isFullscreen = false;
+            imageContent.classList.remove('fullscreen');
+            fullscreenBtn.innerHTML = '<i data-lucide="maximize-2"></i>';
+            lucide.createIcons();
+        }
+    });
+
+    // Initialize the Lucide icons
+    lucide.createIcons();
 }
 
 function showVideoVariations(stepName, orisha, vars, indexInFilteredSteps = null) {
