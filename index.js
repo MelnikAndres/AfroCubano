@@ -371,10 +371,10 @@ function showVideoVariations(stepName, orisha, indexInFilteredSteps = null) {
     const player = modal.querySelector('#video-player');
 
     const sources = [
-        { label: 'Original', url: `/afrocubano/pasos/${base}.mp4` },
+        { label: 'Original', url: `/pasos/${base}.mp4` },
         ...Array.from({ length: 5 }, (_, i) => ({
             label: `Variante ${i + 1}`,
-            url: `/afrocubano/pasos/${base}-var-${i + 1}.mp4`
+            url: `/pasos/${base}-var-${i + 1}.mp4`
         }))
     ];
 
@@ -437,7 +437,7 @@ function showAudioPlayer(stepName, orisha, indexInFilteredSteps = null) {
             <div class="audio-controls">
                 <div class="audio-player-container">
                     <audio id="audio-player" controls>
-                        <source src="/afrocubano/audios/${base}.mp3" type="audio/mpeg">
+                        <source src="/audios/${base}.mp3" type="audio/mpeg">
                         Your browser does not support the audio element.
                     </audio>
                 </div>
