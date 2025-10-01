@@ -38,7 +38,7 @@ function createStepHTML(step, status = null) {
     if (step.audio) {
         html += ` <a href="#" class="audio-link" onclick="event.preventDefault();showAudioPlayer('${step.nombre}', '${step.orisha}', ${indexInFiltered})">Audio ♪</a>`;
     }
-    html += ` <a href="#" class="image-link" onclick="event.preventDefault();showImageViewer('${step.nombre}', '${step.orisha}', ${indexInFiltered})">Imagen 🖼️</a>`;
+    html += ` <a href="#" class="image-link" onclick="event.preventDefault();showImageViewer('${step.nombre}', '${step.orisha}', ${indexInFiltered})">Explicación ★</a>`;
     html += `</div>`;
     // Mostrar etiqueta mini SOLO si es modo aleatorio y fue marcado como "no lo sé"
     if (status === 'dontknow') {
