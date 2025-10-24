@@ -10,10 +10,15 @@ let colores = {
     'Ochosi': ['#3357ff', '#ffff00'],  //azul y amarillo
     'Yemaya': ['#0000ff'], //azul
     'Oshun': ['#ffff00'], //amarillo
+    'Oya': ['#ff00ff', '#808080'], //morado y gris
 }
 
 function getProgress() {
     return JSON.parse(localStorage.getItem(storageKey)) || {};
+}
+
+function cleanText(text) {
+    return text.toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]/g, '')
 }
 
 function saveProgress(progress) {
@@ -28,17 +33,22 @@ function resetProgress() {
 
 function createStepHTML(step, status = null) {
     let html = `<div class="info">`;
-    html += `<span class="capitalize-me step-name"><strong >${step.nombre}</strong></span>`;
+    const indexInFiltered = filteredSteps.findIndex(s => s.nombre === step.nombre && s.orisha === step.orisha);
+    html += `<span class="capitalize-me step-name"><strong >${step.nombre}</strong>
+    <button class="info-btn" onclick="event.preventDefault();showStepInfoModal(${indexInFiltered})"><i data-lucide="info"></i>
+    </button>
+    </span>`;
 
     html += "<div>"
-    const indexInFiltered = filteredSteps.findIndex(s => s.nombre === step.nombre);
     if (step.video) {
         html += ` <a href="#" class="video-link" class="video-button" onclick="event.preventDefault();showVideoVariations('${step.nombre}', '${step.orisha}','${step.video}', ${indexInFiltered})">Video ▶︎</a>`;
     }
     if (step.audio) {
         html += ` <a href="#" class="audio-link" onclick="event.preventDefault();showAudioPlayer('${step.nombre}', '${step.orisha}', ${indexInFiltered})">Audio ♪</a>`;
     }
+    if (step.explicacion) {
     html += ` <a href="#" class="image-link" onclick="event.preventDefault();showImageViewer('${step.nombre}', '${step.orisha}', ${indexInFiltered})">Explicación ★</a>`;
+    }
     html += `</div>`;
     // Mostrar etiqueta mini SOLO si es modo aleatorio y fue marcado como "no lo sé"
     if (status === 'dontknow') {
@@ -49,18 +59,43 @@ function createStepHTML(step, status = null) {
     if (step.orisha) html += orishaTag(step.orisha);
     html += `</div>`;
 
-    html += `</div>`; // .info
+    html += `</div>`;
     return html;
+}
+// Modal logic for info button
+function showStepInfoModal(indexInFiltered) {
+    const step = filteredSteps[indexInFiltered];
+    const modal = document.createElement('div');
+    const sameToqueSteps = allSteps.filter(s => s.toque === step.toque && s.nombre !== step.nombre);
+    const sameStepOrishas = allSteps.filter(s => s.nombre === step.nombre);
+    modal.className = 'info-modal';
+    modal.innerHTML = `
+        <div class="info-backdrop" onclick="this.parentElement.remove()"></div>
+        <div class="info-content">
+            <div class="normal-view-controls">
+                <h2 id="info-step-title" class="step-title step-name">${step.nombre}</h2>
+                <div class="info-body">
+                    <p><strong>Orisha:</strong> ${sameStepOrishas.length > 0 ? `${sameStepOrishas.map(s => s.orisha).join(', ')}` : ''}</p>
+                    <p><strong>Toque:</strong> ${step.toque ? step.toque : '-'}</p>
+                    
+                    ${sameToqueSteps.length > 0 ? `<hr/><h3>Otros pasos con el mismo toque (${sameToqueSteps.length}):</h3> <p>${sameToqueSteps.map(s => `${s.nombre} (${s.orisha})`).join(', ')}</p>` : ''}
+                    <hr/>
+                    <p><strong>Notas:</strong> ${step.notas ? step.notas : '-'}</p>
+                    </div>
+                <div class="navigation-controls">
+                    <button class="btn btn-secondary close-btn" onclick="this.closest('.info-modal').remove()">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
 }
 
 function orishaTag(orisha) {
     return `<span class="tag ${orisha.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '')
         }">${orisha}</span>`;
 }
-
-
-
-
 
 function updateFilters(data) {
     const orishas = new Set();
@@ -181,6 +216,7 @@ function updateUI(data) {
     document.getElementById('known-count').textContent = knownCount;
     document.getElementById('dontKnown-count').textContent = dontknowCount;
     document.getElementById('unseen-count').textContent = unseenCount;
+    lucide.createIcons()
 }
 
 
@@ -365,7 +401,6 @@ function showReaction(reaction) {
         emoji.remove();
     }, 1000); // match animation duration
 }
-lucide.createIcons();
 
 
 function isFilterActive() {
@@ -376,7 +411,8 @@ function isFilterActive() {
 }
 
 function showImageViewer(stepName, orisha, indexInFilteredSteps = null) {
-    const base = (stepName+orisha).toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]/g, '');
+    const pasoClean = cleanText(stepName);
+    const orishaClean = cleanText(orisha);
     const modal = document.createElement('div');
     modal.className = 'image-modal';
 
@@ -384,7 +420,7 @@ function showImageViewer(stepName, orisha, indexInFilteredSteps = null) {
         <div class="image-backdrop" onclick="this.parentElement.remove()"></div>
         <div class="image-content">
             <div class="image-wrapper">
-                <img id="image-viewer" src="explicaciones/${base}.jpg" alt="${stepName}">
+                <img id="image-viewer" src="explicaciones/${orishaClean}/${pasoClean}.jpg" alt="${stepName}">
                 <button id="fullscreen-btn" class="btn btn-secondary fullscreen-btn" title="Pantalla completa">
                     <i data-lucide="maximize-2"></i>
                 </button>
@@ -455,8 +491,8 @@ function showImageViewer(stepName, orisha, indexInFilteredSteps = null) {
 }
 
 function showVideoVariations(stepName, orisha, vars, indexInFilteredSteps = null) {
-    const pasoClean = stepName.toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]/g, '');
-    const orishaClean = orisha.toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]/g, '');
+    const pasoClean = cleanText(stepName);
+    const orishaClean = cleanText(orisha);
     const modal = document.createElement('div');
     modal.className = 'video-modal';
 
@@ -467,7 +503,9 @@ function showVideoVariations(stepName, orisha, vars, indexInFilteredSteps = null
             <h2 id="video-step-title" class="step-title step-name">${stepName +' '+ orisha}</h2>
             <div class="video-controls">
                 <button id="previous-step" class="arrow-btn btn-secondary"><</button>
-                <video id="video-player" controls autoplay loop></video>
+                <div class="video-viewport">
+                    <video id="video-player" controls autoplay loop></video>
+                </div>
                 <button id="next-step" class="arrow-btn btn-secondary">></button>
             </div>
             <button class="btn btn-secondary close-btn" onclick="this.closest('.video-modal').remove()">Cerrar</button>
@@ -522,7 +560,8 @@ function showVideoVariations(stepName, orisha, vars, indexInFilteredSteps = null
 }
 
 function showAudioPlayer(stepName, orisha, indexInFilteredSteps = null) {
-    const base = stepName.toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]/g, '');
+    const pasoClean = cleanText(stepName);
+    const orishaClean = cleanText(orisha);
     const modal = document.createElement('div');
     modal.className = 'audio-modal';
 
@@ -533,7 +572,7 @@ function showAudioPlayer(stepName, orisha, indexInFilteredSteps = null) {
             <div class="audio-controls">
                 <div class="audio-player-container">
                     <audio id="audio-player" controls>
-                        <source src="audios/${base}.mp3" type="audio/mpeg">
+                        <source src="audios/${orishaClean}/${pasoClean}.mp3" type="audio/mpeg">
                         Your browser does not support the audio element.
                     </audio>
                 </div>
@@ -595,3 +634,4 @@ function showAudioPlayer(stepName, orisha, indexInFilteredSteps = null) {
     });
 }
 
+lucide.createIcons();

@@ -14,6 +14,9 @@ function doGet(e) {
       audio: row[2] ?? 0,
       enganche: row[3],
       video: row[4] ?? 0,
+      explicacion: row[5] ?? 0,
+      toque: row[6],
+      notas: row[7],
     };
   });
 
