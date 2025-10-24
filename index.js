@@ -455,7 +455,8 @@ function showImageViewer(stepName, orisha, indexInFilteredSteps = null) {
 }
 
 function showVideoVariations(stepName, orisha, vars, indexInFilteredSteps = null) {
-    const base = (stepName + orisha).toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]/g, '');
+    const pasoClean = stepName.toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]/g, '');
+    const orishaClean = orisha.toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]/g, '');
     const modal = document.createElement('div');
     modal.className = 'video-modal';
 
@@ -480,15 +481,15 @@ function showVideoVariations(stepName, orisha, vars, indexInFilteredSteps = null
 
     if (vars){
         const defaultOption = document.createElement('option');
-        defaultOption.value = `pasos/${base}.mp4`;
+        defaultOption.value = `pasos/${orishaClean}/${pasoClean}.mp4`;
         defaultOption.textContent = 'Base';
         selector.appendChild(defaultOption);
-        player.src = `pasos/${base}.mp4`;
+        player.src = `pasos/${orishaClean}/${pasoClean}.mp4`;
     }
 
     for (let i = 1; i < vars; i++) {
         const option = document.createElement('option');
-        option.value = `pasos/${base}-var-${i}.mp4`;
+        option.value = `pasos/${orishaClean}/${pasoClean}-var-${i}.mp4`;
         option.textContent = `Variante ${i}`;
         selector.appendChild(option);
     }
