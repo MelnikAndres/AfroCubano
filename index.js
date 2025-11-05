@@ -281,6 +281,7 @@ function showRandomStep(step) {
     actions.appendChild(btnKnow);
     actions.appendChild(btnDontKnow);
     randomBox.appendChild(actions);
+    lucide.createIcons();
 }
 
 
